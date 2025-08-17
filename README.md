@@ -1,4 +1,4 @@
-# Documentação - Classe Travessia
+# Documentação - Problema da Travessia
 
 ## Visão Geral
 A classe `Travessia` implementa o clássico problema lógico da travessia do rio, onde um fazendeiro precisa transportar um lobo, uma cabra e alface para o outro lado do rio, respeitando certas restrições.
