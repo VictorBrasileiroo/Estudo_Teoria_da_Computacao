@@ -1,92 +1,139 @@
-# Documentação - Problema da Travessia
+# 🚣 Problema da Travessia - Lobo, Cabra e Alface
 
-## Visão Geral
-A classe `Travessia` implementa o clássico problema lógico da travessia do rio, onde um fazendeiro precisa transportar um lobo, uma cabra e alface para o outro lado do rio, respeitando certas restrições.
+## 📋 Descrição
 
-## Classe Travessia
+Este projeto implementa o clássico **Problema da Travessia** usando conceitos de **Teoria da Computação** e **Autômatos Finitos**. O problema consiste em transportar um lobo, uma cabra e um alface de uma margem do rio para a outra, usando um barco que comporta apenas o fazendeiro e mais um item por vez.
 
-### Atributos
+### 🎯 Objetivo
+Levar todos os elementos (lobo, cabra, alface) da margem esquerda para a margem direita sem que:
+- O lobo coma a cabra (quando estão juntos sem o fazendeiro)
+- A cabra coma o alface (quando estão juntos sem o fazendeiro)
 
-- **`margem_esquerda`** (`set`): Conjunto contendo os itens presentes na margem esquerda do rio
-- **`margem_direita`** (`set`): Conjunto contendo os itens presentes na margem direita do rio  
-- **`posicao_barco`** (`str`): String indicando a posição atual do barco ('esquerda' ou 'direita')
+## 🏗️ Estrutura do Projeto
 
-### Métodos
+### Arquivos Principais
 
-#### `__init__(self)`
-**Descrição:** Construtor da classe que inicializa o estado inicial do problema.
-- Todos os itens começam na margem esquerda
-- Margem direita inicia vazia
-- Barco começa na margem esquerda
+- **`travessia.py`** - Classe principal que gerencia o estado do jogo
+- **`automato.py`** - Implementação do autômato finito e algoritmos de busca
+- **`app.py`** - Interface web interativa usando Streamlit
 
-#### `exibir_estado(self)`
-**Descrição:** Exibe o estado atual do jogo de forma visual.
-- Mostra os itens em cada margem
-- Indica a posição do barco
-- Formata a saída com separadores visuais
+## 🔧 Tecnologias Utilizadas
 
-#### `movimento_valido(self, margem_avaliada)`
-**Descrição:** Verifica se um movimento resulta em um estado válido do jogo.
+- **Python 3.8+**
+- **Streamlit** - Interface web interativa
+- **Dataclasses** - Estruturas de dados imutáveis
+- **Collections** - Algoritmos de busca (BFS)
+- **SVG** - Geração de diagramas de estados
 
-**Parâmetros:**
-- `margem_avaliada` (`set`): A margem que será avaliada após o movimento
 
-**Retorna:** 
-- `bool`: `True` se o movimento é válido, `False` caso contrário
+## 🧮 Representação de Estados
 
-**Regras verificadas:**
-- Lobo não pode ficar sozinho com a cabra
-- Cabra não pode ficar sozinha com a alface
+Os estados são codificados como strings de 4 bits **FLCA**, onde:
+- **F** = Fazendeiro (0=esquerda, 1=direita)
+- **L** = Lobo (0=esquerda, 1=direita)
+- **C** = Cabra (0=esquerda, 1=direita)
+- **A** = Alface (0=esquerda, 1=direita)
 
-#### `mover(self, item)`
-**Descrição:** Executa o movimento de um item (ou movimento vazio) entre as margens.
+### Exemplos:
+- `"0000"` - Estado inicial (todos na esquerda)
+- `"1111"` - Estado final (todos na direita)
+- `"1010"` - Fazendeiro e cabra na direita, lobo e alface na esquerda
 
-**Parâmetros:**
-- `item` (`str`): O item a ser movido ('lobo', 'cabra', 'alface', ou 'nenhum')
+## 🤖 Autômato Finito Determinístico (AFD)
 
-**Retorna:**
-- `bool`: `True` se o movimento foi executado com sucesso, `False` caso contrário
+### Definição Formal
+**M = ⟨K, Σ, δ, q₀, F⟩**
 
-**Processo:**
-1. Verifica se o item está na margem de partida
-2. Remove o item da origem (se não for 'nenhum')
-3. Move o barco para a margem oposta
-4. Adiciona o item ao destino (se não for 'nenhum')
-5. Valida o movimento resultante
-6. Desfaz o movimento se for inválido
+- **K** - Conjunto de estados seguros + estado-poço ⊥
+- **Σ** - Alfabeto de ações {F, FL, FC, FA}
+- **δ** - Função de transição
+- **q₀** - Estado inicial "0000"
+- **F** - Estado de aceitação {"1111"}
 
-#### `problema_resolvido(self)`
-**Descrição:** Verifica se o problema foi resolvido.
+## 📊 Funcionalidades da Interface
 
-**Retorna:**
-- `bool`: `True` se todos os 3 itens estão na margem direita, `False` caso contrário
+### Controles Principais
+- **🔁 Reiniciar** - Volta ao estado inicial
+- **↩️ Desfazer** - Desfaz último movimento
+- **💡 Solução Ótima** - Aplica automaticamente a melhor solução
+- **Velocidade da Animação** - Controla velocidade das transições
 
-## Função Principal
+### Visualizações
+1. **Estado Atual** - Mostra posição de cada elemento
+2. **Diagrama de Estados** - Grafo SVG interativo dos estados seguros
+3. **Histórico** - Lista dos últimos movimentos realizados
+4. **Definição Formal** - Mostra os componentes do AFD
 
-### `jogar()`
-**Descrição:** Função principal que gerencia o loop do jogo.
+## 🎨 Características do Diagrama
 
-**Funcionalidades:**
-- Exibe instruções iniciais
-- Controla o loop principal do jogo
-- Processa entrada do usuário
-- Exibe mensagem de vitória
+- **Nó Azul** - Estado atual
+- **Nó Verde** - Estado objetivo (1111)
+- **Aresta Azul** - Última ação executada
+- **Layout em Camadas** - Estados organizados por distância do inicial
 
-**Fluxo:**
-1. Cria instância da classe Travessia
-2. Exibe regras e objetivo
-3. Loop até problema ser resolvido:
-   - Exibe estado atual
-   - Solicita entrada do usuário
-   - Processa movimento
-4. Exibe mensagem de sucesso
+## 🧪 Exemplos de Uso
 
-## Regras do Jogo
+### Solução Clássica
+1. `FC` - Leva cabra para direita
+2. `F` - Volta sozinho
+3. `FL` - Leva lobo para direita
+4. `FC` - Volta com cabra
+5. `FA` - Leva alface para direita
+6. `F` - Volta sozinho
+7. `FC` - Leva cabra para direita
 
-1. **Capacidade do barco:** Apenas um item por viagem
-2. **Restrição lobo-cabra:** O lobo não pode ficar sozinho com a cabra
-3. **Restrição cabra-alface:** A cabra não pode ficar sozinha com a alface
-4. **Objetivo:** Transportar todos os itens para a margem direita
 
-## Estados Válidos
-O jogo verifica automaticamente se um estado é válido após cada movimento, impedindo configurações onde algum item seria "comido" por outro.
+## 🔬 Conceitos Teóricos Aplicados
+
+### 1. **Modelagem por Estados**
+Cada configuração do problema é um estado único no autômato.
+
+### 2. **Transições Determinísticas** 
+Cada ação em um estado leva a exatamente um próximo estado.
+
+### 3. **Estados de Rejeição**
+Estados inseguros levam ao estado-poço ⊥.
+
+### 4. **Busca em Grafos**
+BFS garante encontrar solução com menor número de passos.
+
+
+## 🚀 Extensões Possíveis
+
+- Implementar outros algoritmos de busca (DFS, A*)
+- Adicionar variações do problema (mais itens, barco maior)
+- Implementar autômato não-determinístico (AFN)
+- Adicionar análise de complexidade temporal
+- Exportar diagramas em outros formatos
+
+## 🎓 Aplicação Educacional
+
+Este projeto é ideal para:
+- **Disciplinas de Teoria da Computação**
+- **Estudo de Autômatos Finitos**
+- **Algoritmos de Busca em Grafos**
+- **Modelagem Computacional de Problemas**
+
+## 📚 Bibliografia
+
+- **Sipser, M.** - Introduction to the Theory of Computation
+- **Hopcroft, J.** - Introduction to Automata Theory, Languages, and Computation
+- Problema clássico de **Alcuin de York** (século VIII)
+
+## 📄 Licença
+
+Este projeto é desenvolvido para fins educacionais.
+
+## 🤝 Contribuições
+
+Contribuições são bem-vindas! Sinta-se à vontade para:
+- Reportar bugs
+- Sugerir melhorias
+- Adicionar novas funcionalidades
+- Melhorar a documentação
+
+---
+
+**Desenvolvido para fins educacionais em Teoria da Computação** 🎓
+
+
